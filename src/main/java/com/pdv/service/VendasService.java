@@ -5,14 +5,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.pdv.dto.InfoProdutosDTO;
 import com.pdv.dto.InfoVendasDTO;
 import com.pdv.dto.ProdutosDTO;
-import com.pdv.dto.ResponseDTO;
 import com.pdv.dto.VendasDTO;
 import com.pdv.entity.Clientes;
 import com.pdv.entity.Produtos;
@@ -61,7 +58,7 @@ public class VendasService {
 	}
 
 	public long salvar(VendasDTO venda) {
-		
+
 		Clientes cliente = clientesRepository.findById(venda.getClienteId())
 				.orElseThrow(() -> new NaoExisteException("Cliente não encontrado!"));
 
@@ -75,7 +72,7 @@ public class VendasService {
 		salvarVendaProduto(produtos, novaVendas);
 
 		return novaVendas.getId();
-		
+
 	}
 
 	private List<VendasProduto> getVendaProduto(List<ProdutosDTO> produtos) {

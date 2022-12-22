@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import com.pdv.dto.ClientesDTO;
 import com.pdv.entity.Clientes;
 import com.pdv.exception.NaoExisteException;
-import com.pdv.exception.OperacaoInvalidaException;
 import com.pdv.repository.ClientesRepository;
 
 @Service
@@ -35,26 +34,22 @@ public class ClienteService {
 		Clientes cliente = optional.get();
 		return new ClientesDTO(cliente.getId(), cliente.getNome(), cliente.isAtivo());
 	}
-	
+
 	public ClientesDTO adicionar(Clientes clientes) {
 		clientesRepository.save(clientes);
 		return new ClientesDTO(clientes.getId(), clientes.getNome(), clientes.isAtivo());
 	}
 
 	public ClientesDTO atualizar(Clientes clientes) {
-		
-		if(clientes == null || clientes.getId() == null) {
-			throw new OperacaoInvalidaException("Os dados do cliente não podem ser vazios");
-		}
-		
+
 		Optional<Clientes> optional = clientesRepository.findById(clientes.getId());
 
-		if (!optional.isEmpty()) {
+		if (!optional.isPresent()) {
 			throw new NaoExisteException("Cliente não encontrado!");
+		} else {
+			clientesRepository.save(clientes);
+			return new ClientesDTO(clientes.getId(), clientes.getNome(), clientes.isAtivo());
 		}
-
-		clientesRepository.save(clientes);
-		return new ClientesDTO(clientes.getId(), clientes.getNome(), clientes.isAtivo());
 	}
 
 	public void deletar(long id) {

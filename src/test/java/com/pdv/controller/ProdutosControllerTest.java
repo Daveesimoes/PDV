@@ -17,49 +17,46 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pdv.dto.ProdutosDTO;
 import com.pdv.service.ProdutosService;
 
-
 @WebMvcTest(ProdutosController.class)
 class ProdutosControllerTest {
-	
+
 	@Autowired
 	private MockMvc mockMvc;
 
 	@Autowired
 	private ObjectMapper objectMapper;
-	
+
 	@MockBean
 	private ProdutosService produtosService;
-	
+
 	@Test
-	public void listarTest() throws Exception{
-		
+	public void listarTest() throws Exception {
+
 		mockMvc.perform(get("/produtos")).andExpect(status().isOk());
 	}
-	
+
 	@Test
-	public void findById() throws Exception{
+	public void findById() throws Exception {
 		ProdutosDTO user = new ProdutosDTO();
 		user.setDescricao("suahhsiua");
 		user.setProdutosId(2L);
 		user.setQuantidade(80);
-		
-		
+
 		mockMvc.perform(MockMvcRequestBuilders.get("/produtos/2").contentType(MediaType.APPLICATION_JSON_VALUE))
-		.andExpect(status().isOk());
+				.andExpect(status().isOk());
 	}
-	
+
 	@Test
-	public void adicionarTest() throws Exception{
+	public void adicionarTest() throws Exception {
 		ProdutosDTO user = new ProdutosDTO();
 		user.setDescricao("suahhsiua");
 		user.setProdutosId(2L);
 		user.setQuantidade(80);
-		
+
 		mockMvc.perform(post("/produtos").contentType(MediaType.APPLICATION_JSON_VALUE)
-				.content(objectMapper.writeValueAsString(user)))
-		.andExpect(status().isCreated());
+				.content(objectMapper.writeValueAsString(user))).andExpect(status().isCreated());
 	}
-	
+
 	@Test
 	public void adicionarSemNomeTest() throws Exception {
 		ProdutosDTO user = new ProdutosDTO();
@@ -91,7 +88,7 @@ class ProdutosControllerTest {
 
 	@Test
 	public void deletarProdutoTest() throws Exception {
-		
+
 		mockMvc.perform(MockMvcRequestBuilders.delete("/produtos/2").contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk());
 	}

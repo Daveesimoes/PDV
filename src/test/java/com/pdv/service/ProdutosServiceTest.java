@@ -23,7 +23,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.pdv.dto.ProdutosDTO;
 import com.pdv.entity.Produtos;
 import com.pdv.exception.NaoExisteException;
-import com.pdv.exception.OperacaoInvalidaException;
 import com.pdv.repository.ProdutosRepository;
 
 @RunWith(SpringRunner.class)
@@ -92,7 +91,7 @@ class ProdutosServiceTest {
 		
 		when(produtosRepository.save(any())).thenReturn(null);
 				
-		assertThrows(OperacaoInvalidaException.class,() -> produtosService.alterar(new Produtos()));
+		assertThrows(NaoExisteException.class,() -> produtosService.alterar(new Produtos()));
 		
 	}
 	

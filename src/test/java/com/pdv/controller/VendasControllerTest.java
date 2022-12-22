@@ -40,7 +40,7 @@ class VendasControllerTest {
 	@Test
 	public void venderTest() throws Exception {
 		List<ProdutosDTO> list = new ArrayList<>();
-				
+
 		VendasDTO user = new VendasDTO();
 		user.setClienteId(1L);
 		user.setProdutos(list);
@@ -51,21 +51,20 @@ class VendasControllerTest {
 
 	@Test
 	public void venderSemIdTest() throws Exception {
-				
-		
+
 		mockMvc.perform(post("/vendas").contentType(MediaType.APPLICATION_JSON_VALUE))
 				.andExpect(status().isBadRequest());
 	}
-	
+
 	@Test
 	public void procurarByIdTest() throws Exception {
 		List<ProdutosDTO> list = new ArrayList<>();
-				
+
 		VendasDTO user = new VendasDTO();
 		user.setClienteId(1L);
 		user.setProdutos(list);
 
 		mockMvc.perform(get("/vendas/1").contentType(MediaType.APPLICATION_JSON_VALUE)
 				.content(objectMapper.writeValueAsString(user))).andExpect(status().isOk());
-	}	
-} 
+	}
+}
