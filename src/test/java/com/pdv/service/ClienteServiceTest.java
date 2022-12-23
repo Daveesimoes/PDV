@@ -82,13 +82,4 @@ class ClienteServiceTest {
 		assertNotNull(retorno);
 
 	}
-
-	@Test
-	public void atualizarClienteInexistenteTest() {
-
-		when(clientesRepository.save(any())).thenReturn(null);
-
-		assertThrows(NaoExisteException.class, () -> clienteService.atualizar(new Clientes()));
-
-	}
 }

@@ -1,5 +1,7 @@
 package com.pdv.entity;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -33,7 +35,9 @@ public class VendasProduto {
 	
 	@Column(nullable = false)
 	private int quantidade;
-
 	
+	@Column
+	private BigDecimal valorTotal;
+		
 	
 }

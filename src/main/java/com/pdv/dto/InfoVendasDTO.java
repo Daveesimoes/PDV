@@ -1,5 +1,6 @@
 package com.pdv.dto;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -14,5 +15,5 @@ public class InfoVendasDTO {
 	private String cliente;
 	private String data;
 	private List<InfoProdutosDTO> produtos;
-
+	private BigDecimal valor;
 }

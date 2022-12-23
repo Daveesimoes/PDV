@@ -5,10 +5,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -22,7 +24,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.pdv.dto.InfoVendasDTO;
 import com.pdv.dto.ProdutosDTO;
-import com.pdv.dto.VendasDTO;
 import com.pdv.entity.Clientes;
 import com.pdv.entity.Produtos;
 import com.pdv.entity.Vendas;
@@ -66,20 +67,16 @@ class VendasServiceTest {
 		when(clientesRepository.findById(anyLong())).thenReturn(user);
 		Vendas vendas = vendaPadrao();
 		when(vendasRepository.save(any())).thenReturn(vendas);
-		List<ProdutosDTO> produto = new ArrayList<>();
-		produto.add(new ProdutosDTO(1L, "Coca-cola", 30));
+		List<VendasProduto> produto = new ArrayList<>();
+		produto.add(new VendasProduto(1L,new Vendas(), new Produtos(), 30, new BigDecimal(30)));
 
-		VendasDTO venda = new VendasDTO();
-		venda.setClienteId(vendas.getId());
-		venda.setProdutos(produto);
-
+		
 		when(produtosRepository.getReferenceById(anyLong()))
 				.thenReturn(new Produtos(1L, "Coca-Cola", new BigDecimal("9"), 40));
 
-		Long retorno = vendasService.salvar(venda);
+		vendasService.salvar(vendas);
 
-		assertNotNull(retorno);
-
+		verify(vendasRepository, times(1)).save(vendas);
 	}
 
 	@Test
@@ -88,17 +85,11 @@ class VendasServiceTest {
 		when(clientesRepository.findById(anyLong())).thenReturn(user);
 		Vendas vendas = vendaPadrao();
 		when(vendasRepository.save(any())).thenReturn(vendas);
-		List<ProdutosDTO> produto = new ArrayList<>();
-		produto.add(new ProdutosDTO(1L, "Coca-cola", 30));
-
-		VendasDTO venda = new VendasDTO();
-		venda.setClienteId(vendas.getId());
-		venda.setProdutos(produto);
-
+						
 		when(produtosRepository.getReferenceById(anyLong()))
-				.thenReturn(new Produtos(1L, "Coca-Cola", new BigDecimal("9"), 20));
+				.thenReturn(new Produtos(1L, "Coca-Cola", new BigDecimal("9"), 5));
 
-		assertThrows(OperacaoInvalidaException.class, () -> vendasService.salvar(venda));
+		assertThrows(OperacaoInvalidaException.class, () -> vendasService.salvar(vendas));
 
 	}
 
@@ -109,16 +100,12 @@ class VendasServiceTest {
 		Vendas vendas = vendaPadrao();
 		when(vendasRepository.save(any())).thenReturn(vendas);
 		List<ProdutosDTO> produto = new ArrayList<>();
-		produto.add(new ProdutosDTO(1L, "Coca-cola", 30));
-
-		VendasDTO venda = new VendasDTO();
-		venda.setClienteId(vendas.getId());
-		venda.setProdutos(produto);
+		produto.add(new ProdutosDTO(1L, 30));
 
 		when(produtosRepository.getReferenceById(anyLong()))
 				.thenReturn(new Produtos(1L, "Coca-Cola", new BigDecimal("9"), 0));
 
-		assertThrows(NaoExisteException.class, () -> vendasService.salvar(venda));
+		assertThrows(NaoExisteException.class, () -> vendasService.salvar(vendas));
 
 	}
 
@@ -128,13 +115,9 @@ class VendasServiceTest {
 		when(clientesRepository.findById(anyLong())).thenReturn(user);
 		Vendas vendas = vendaPadrao();
 		when(vendasRepository.save(any())).thenReturn(vendas);
-		List<ProdutosDTO> produto = new ArrayList<>();
-		
-		VendasDTO venda = new VendasDTO();
-		venda.setClienteId(vendas.getId());
-		venda.setProdutos(produto);
+		vendas.setVendas(new ArrayList<VendasProduto>());		
 
-		assertThrows(OperacaoInvalidaException.class, () -> vendasService.salvar(venda));
+		assertThrows(OperacaoInvalidaException.class, () -> vendasService.salvar(vendas));
 
 	}
 
@@ -162,12 +145,12 @@ class VendasServiceTest {
 	}
 
 	private Vendas vendaPadrao() {
+		Clientes clientes = new Clientes(1L, "DAVE", true, null);
 		Produtos produtos = new Produtos(1L, "Coca-Cola", new BigDecimal("9"), 20);
 		List<VendasProduto> list = new ArrayList<>();
-		list.add(new VendasProduto(1L, new Vendas(1L, LocalDate.now(), new Clientes(1L, "DAVE", true, null), null),
-				produtos, 20));
-		Clientes clientes = new Clientes(1L, "DAVE", true, null);
-		Vendas vendas = new Vendas(1L, LocalDate.now(), clientes, list);
+		list.add(new VendasProduto(1L, new Vendas(1L, LocalDateTime.now(), clientes, null, new BigDecimal(30)),
+				produtos, 20, new BigDecimal(30)));
+				Vendas vendas = new Vendas(1L, LocalDateTime.now(), clientes, list, new BigDecimal(80));
 
 		return vendas;
 

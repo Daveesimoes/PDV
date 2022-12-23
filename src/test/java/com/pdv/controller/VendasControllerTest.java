@@ -46,7 +46,7 @@ class VendasControllerTest {
 		user.setProdutos(list);
 
 		mockMvc.perform(post("/vendas").contentType(MediaType.APPLICATION_JSON_VALUE)
-				.content(objectMapper.writeValueAsString(user))).andExpect(status().isCreated());
+				.content(objectMapper.writeValueAsString(user))).andExpect(status().isOk());
 	}
 
 	@Test

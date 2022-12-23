@@ -5,6 +5,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.math.BigDecimal;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -15,6 +17,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pdv.dto.ProdutosDTO;
+import com.pdv.entity.Produtos;
 import com.pdv.service.ProdutosService;
 
 @WebMvcTest(ProdutosController.class)
@@ -38,7 +41,6 @@ class ProdutosControllerTest {
 	@Test
 	public void findById() throws Exception {
 		ProdutosDTO user = new ProdutosDTO();
-		user.setDescricao("suahhsiua");
 		user.setProdutosId(2L);
 		user.setQuantidade(80);
 
@@ -48,9 +50,10 @@ class ProdutosControllerTest {
 
 	@Test
 	public void adicionarTest() throws Exception {
-		ProdutosDTO user = new ProdutosDTO();
-		user.setDescricao("suahhsiua");
-		user.setProdutosId(2L);
+		Produtos user = new Produtos();
+		user.setId(28L);
+		user.setDescricao("Coca-cola");
+		user.setPreco(new BigDecimal(7.99));
 		user.setQuantidade(80);
 
 		mockMvc.perform(post("/produtos").contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -67,9 +70,10 @@ class ProdutosControllerTest {
 
 	@Test
 	public void atualizarTest() throws Exception {
-		ProdutosDTO user = new ProdutosDTO();
-		user.setProdutosId(1L);
-		user.setDescricao("suahhsiua");
+		Produtos user = new Produtos();
+		user.setId(28L);
+		user.setDescricao("Coca-cola");
+		user.setPreco(new BigDecimal(7.99));
 		user.setQuantidade(80);
 
 		mockMvc.perform(put("/produtos").contentType(MediaType.APPLICATION_JSON_VALUE)

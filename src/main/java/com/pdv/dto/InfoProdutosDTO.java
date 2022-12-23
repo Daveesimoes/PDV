@@ -12,6 +12,6 @@ public class InfoProdutosDTO {
 	private long id;
 	private String descricao;
 	private int quantidade;
-
+	
 
 }

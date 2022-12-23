@@ -1,6 +1,6 @@
 package com.pdv.service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -9,8 +9,6 @@ import org.springframework.stereotype.Service;
 
 import com.pdv.dto.InfoProdutosDTO;
 import com.pdv.dto.InfoVendasDTO;
-import com.pdv.dto.ProdutosDTO;
-import com.pdv.dto.VendasDTO;
 import com.pdv.entity.Clientes;
 import com.pdv.entity.Produtos;
 import com.pdv.entity.Vendas;
@@ -40,54 +38,55 @@ public class VendasService {
 	private InfoVendasDTO getInfoVendas(Vendas vendas) {
 		InfoVendasDTO infoVendasDTO = new InfoVendasDTO();
 		infoVendasDTO.setCliente(vendas.getClientes().getNome());
-		infoVendasDTO.setData(vendas.getDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+		infoVendasDTO.setData(vendas.getDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
 		infoVendasDTO.setProdutos(getInfoProdutos(vendas.getVendas()));
-
+		infoVendasDTO.setValor(vendas.getValor());
+		
+	
 		return infoVendasDTO;
 	}
-
+	
 	private List<InfoProdutosDTO> getInfoProdutos(List<VendasProduto> vendas) {
 		return vendas.stream().map(venda -> {
 			InfoProdutosDTO infoProdutosDTO = new InfoProdutosDTO();
 			infoProdutosDTO.setId(venda.getId());
 			infoProdutosDTO.setDescricao(venda.getProdutos().getDescricao());
 			infoProdutosDTO.setQuantidade(venda.getQuantidade());
+			
 			return infoProdutosDTO;
 		}).collect(Collectors.toList());
 
 	}
 
-	public long salvar(VendasDTO venda) {
+	public void salvar(Vendas venda) {
 
-		Clientes cliente = clientesRepository.findById(venda.getClienteId())
+		Clientes cliente = clientesRepository.findById(venda.getClientes().getId())
 				.orElseThrow(() -> new NaoExisteException("Cliente não encontrado!"));
 
-		Vendas novaVendas = new Vendas();
-		novaVendas.setClientes(cliente);
-		novaVendas.setDate(LocalDate.now());
-		List<VendasProduto> produtos = getVendaProduto(venda.getProdutos());
+		venda.setClientes(cliente);
+		venda.setDate(LocalDateTime.now());
+		List<VendasProduto> produtos = getVendaProduto(venda.getVendas());
 
-		novaVendas = vendasRepository.save(novaVendas);
+		
+		venda = vendasRepository.save(venda);
 
-		salvarVendaProduto(produtos, novaVendas);
-
-		return novaVendas.getId();
+		salvarVendaProduto(produtos, venda);
 
 	}
 
-	private List<VendasProduto> getVendaProduto(List<ProdutosDTO> produtos) {
+	private List<VendasProduto> getVendaProduto(List<VendasProduto> produtos) {
 
 		if (produtos.isEmpty()) {
 			throw new OperacaoInvalidaException("Não pode adicionar uma venda sem produtos!");
 		}
 
 		return produtos.stream().map(produto -> {
-			Produtos item = produtosRepository.getReferenceById(produto.getProdutosId());
+			Produtos item = produtosRepository.getReferenceById(produto.getId());
 
 			VendasProduto vendasProduto = new VendasProduto();
 			vendasProduto.setProdutos(item);
-			vendasProduto.setQuantidade(item.getQuantidade());
-
+			vendasProduto.setQuantidade(produto.getQuantidade());
+			
 			if (item.getQuantidade() == 0) {
 				throw new NaoExisteException("Não tem esse produto no estoque!");
 			} else if (item.getQuantidade() < produto.getQuantidade()) {
@@ -95,7 +94,8 @@ public class VendasService {
 						"A quantidade de itens à venda (%s) é maior que a quantidade disponível em estoque (%s)!",
 						produto.getQuantidade(), item.getQuantidade()));
 			}
-
+			
+					
 			int total = item.getQuantidade() - produto.getQuantidade();
 			item.setQuantidade(total);
 			produtosRepository.save(item);

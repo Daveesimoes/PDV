@@ -87,19 +87,10 @@ class ProdutosServiceTest {
 	}
 	
 	@Test
-	public void atualizarProdutoInexistenteTest() {
-		
-		when(produtosRepository.save(any())).thenReturn(null);
-				
-		assertThrows(NaoExisteException.class,() -> produtosService.alterar(new Produtos()));
-		
-	}
-	
-	@Test
 	public void deleteProdutoTest() {
 		Optional<Produtos> user = Optional.of(new Produtos(1L, "Coca-Cola", new BigDecimal("9"), 20));
 
-		when(produtosRepository.findById(anyLong())).thenReturn(user);
+		when(produtosRepository.existsById(anyLong())).thenReturn(true);
 		
 		produtosService.delete(user.get().getId());
 		

@@ -1,6 +1,7 @@
 package com.pdv.entity;
 
-import java.time.LocalDate;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import jakarta.persistence.Column;
@@ -23,19 +24,22 @@ import lombok.NoArgsConstructor;
 @Table(name = "vendas")
 @Entity
 public class Vendas {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+
 	@Column(name = "data_venda", nullable = false)
-	private LocalDate date;
-	
+	private LocalDateTime date;
+
 	@ManyToOne
 	@JoinColumn(name = "id_clientes")
 	private Clientes clientes;
-	
+
 	@OneToMany(mappedBy = "vendas", fetch = FetchType.LAZY)
 	private List<VendasProduto> vendas;
+	
+	@Column
+	private BigDecimal valor;
 
 }

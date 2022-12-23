@@ -1,7 +1,6 @@
 package com.pdv.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,34 +24,30 @@ public class ClienteService {
 	}
 
 	public ClientesDTO findById(long id) {
-		Optional<Clientes> optional = clientesRepository.findById(id);
+		Clientes cliente = clientesRepository.findById(id)
+				.orElseThrow(() -> new NaoExisteException("Cliente não encontrado!"));
 
-		if (!optional.isPresent()) {
-			throw new NaoExisteException("Cliente não encontrado!");
-		}
-
-		Clientes cliente = optional.get();
 		return new ClientesDTO(cliente.getId(), cliente.getNome(), cliente.isAtivo());
 	}
 
 	public ClientesDTO adicionar(Clientes clientes) {
-		clientesRepository.save(clientes);
-		return new ClientesDTO(clientes.getId(), clientes.getNome(), clientes.isAtivo());
+		Clientes clienteSalvo = clientesRepository.save(clientes);
+		clienteSalvo.setAtivo(true);
+		
+		return new ClientesDTO(clienteSalvo.getId(), clienteSalvo.getNome(), clienteSalvo.isAtivo());
 	}
 
 	public ClientesDTO atualizar(Clientes clientes) {
+		clientesRepository.save(clientes);
 
-		Optional<Clientes> optional = clientesRepository.findById(clientes.getId());
-
-		if (!optional.isPresent()) {
-			throw new NaoExisteException("Cliente não encontrado!");
-		} else {
-			clientesRepository.save(clientes);
-			return new ClientesDTO(clientes.getId(), clientes.getNome(), clientes.isAtivo());
-		}
+		return new ClientesDTO(clientes.getId(), clientes.getNome(), clientes.isAtivo());
 	}
 
-	public void deletar(long id) {
+	public void deletar(long id) { 
+		if (!clientesRepository.existsById(id)) {
+			throw new NaoExisteException("Cliente não encontrado!");
+		} 
+		
 		clientesRepository.deleteById(id);
 	}
 }

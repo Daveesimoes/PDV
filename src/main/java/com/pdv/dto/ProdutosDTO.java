@@ -12,7 +12,6 @@ public class ProdutosDTO {
 	
 	@Column(name = "produtos_id")
 	private long produtosId;
-	private String descricao;
 	private int quantidade;
 
 }

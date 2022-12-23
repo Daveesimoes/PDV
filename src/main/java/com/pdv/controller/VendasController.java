@@ -12,9 +12,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.pdv.dto.InfoVendasDTO;
-import com.pdv.dto.VendasDTO;
+import com.pdv.entity.Vendas;
 import com.pdv.service.VendasService;
 
 import jakarta.validation.Valid;
@@ -36,9 +37,9 @@ public class VendasController {
 	public ResponseEntity<InfoVendasDTO> procurarId(@PathVariable Long id) {
 		return new ResponseEntity<>(vendasService.vendasById(id), HttpStatus.OK);
 	}
-
+	@ResponseStatus(code = HttpStatus.OK)
 	@PostMapping
-	public ResponseEntity<Long> vender(@RequestBody @Valid VendasDTO vendasDTO) {
-		return new ResponseEntity<>(vendasService.salvar(vendasDTO), HttpStatus.CREATED);
+	public void vender(@RequestBody @Valid Vendas vendas) {
+		vendasService.salvar(vendas);
 	}
 }
